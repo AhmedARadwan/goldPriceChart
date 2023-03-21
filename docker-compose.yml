@@ -1,0 +1,35 @@
+version: "2.3"
+services:
+  goldprice_parser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: "host"
+    environment:
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+      - UID
+  
+    volumes:
+      - /dev:/dev
+      - /lib/modules:/lib/modules
+      - /run/systemd/system:/run/systemd/system:rw
+      - /tmp/.X11-unix
+      - /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket
+      - /run/user/1000/gdm/Xauthority:/root/.Xauthority
+      - ./src:/home/radwan/
+    privileged: true
+    cap_add:
+      - ALL
+    ipc: host
+    tty: true
+    command: /bin/bash -c "python3 /home/radwan/info_parser.py & python3 /home/radwan/flask_plot.py"
+
+  database:
+    image: 'bitnami/mongodb'
+    volumes: 
+      - ./data:/data/db
+    ports:
+      - "27020:27017"
+    tty: true
+    restart: always

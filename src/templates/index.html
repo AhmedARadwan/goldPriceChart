@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gold Prices Over Time</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div>
+        {{ plot_div|safe }}
+    </div>
+    <!-- <div id="plot"></div> -->
+    <script>
+        function updatePlot() {
+            fetch('/update')
+                .then(response => response.json())
+                .then(json => {
+                    var plot_data = JSON.parse(json)
+                    Plotly.newPlot('plot', plot_data.layout, plot_data.data)
+                })
+        }
+        setInterval(updatePlot, 10000) // Update the plot every 5 seconds
+    </script>
+</body>
+</html>
