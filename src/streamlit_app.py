@@ -49,17 +49,38 @@ def time_ago(date):
 
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     st.set_page_config(page_title="Gold Price")
     st.title("Gold Prices Over Time")
     db_handler = MongoDBHandler("mongodb://localhost:27020/prices_database")
 
-    # Date filters
+    # Initialize session state
+    if "filter_applied" not in st.session_state:
+        st.session_state.filter_applied = False
+    if "show_home_button" not in st.session_state:
+        st.session_state.show_home_button = False
+
+    # Sidebar options
     st.sidebar.header("Filter Options")
     start_date = st.sidebar.date_input("Start Date", datetime(2024, 1, 1))
     end_date = st.sidebar.date_input("End Date", datetime(2024, 12, 31))
 
+    # Apply filter button
     if st.sidebar.button("Apply Filter"):
+        st.session_state.filter_applied = True
+        st.session_state.show_home_button = True
+
+    # Home button logic
+    home_button_placeholder = st.sidebar.empty()
+    if st.session_state.show_home_button:
+        home_clicked = home_button_placeholder.button("Back")
+        if home_clicked:
+            st.session_state.filter_applied = False
+            st.session_state.show_home_button = False
+
+    # Render content based on state
+    if st.session_state.filter_applied:
+        # Filtered view
         start_datetime = datetime.combine(start_date, datetime.min.time())
         end_datetime = datetime.combine(end_date, datetime.max.time())
 
@@ -84,9 +105,23 @@ if __name__=="__main__":
             )
             st.plotly_chart(fig, use_container_width=True)
 
+            # get difference in price of 24K gold
+            for i in range(4):
+                if data["Karat"][i] == "24K":
+                    end_price = data["Price"][i]
+            
+            for i in range(len(data["Karat"])-4, len(data["Karat"])):
+                if data["Karat"][i] == "24K":
+                    start_price = data["Price"][i]
+
+            st.subheader("Summary")
+            st.text(f"Difference: {end_price-start_price:.2f} AED")
+            st.text(f"Percentage: {((end_price-start_price)/start_price)*100:.2f} %")
+
         else:
             st.warning("No data found for the selected date range!")
     else:
+        # Home page view
         latest_prices_data = db_handler.get_prices()
         last_price = latest_prices_data[:4]
 
@@ -122,10 +157,27 @@ if __name__=="__main__":
                 x="Date",
                 y="Price",
                 color="Karat",
-                title="Gold Prices Over Time (Latest Data)",
+                title="Gold Prices Over Time (Last Month)",
                 labels={"Price": "Gold Price", "Date": "Date", "Karat": "Karat"},
             )
             st.plotly_chart(fig, use_container_width=True)
+
+            # get difference in price of 24K gold
+            for i in range(4):
+                if data["Karat"][i] == "24K":
+                    end_price = data["Price"][i]
+            
+            for i in range(len(data["Karat"])-4, len(data["Karat"])):
+                if data["Karat"][i] == "24K":
+                    start_price = data["Price"][i]
+
+            st.subheader("Summary")
+            st.text(f"Difference: {end_price-start_price:.2f} AED")
+            st.text(f"Percentage: {((end_price-start_price)/start_price)*100:.2f} %")
+
+
+
+
 
         else:
             st.warning("No latest data available.")
