@@ -19,11 +19,12 @@ services:
       - /run/user/1000/gdm/Xauthority:/root/.Xauthority
       - ./src:/home/radwan/
     privileged: true
+    restart: always
     cap_add:
       - ALL
     ipc: host
     tty: true
-    command: /bin/bash -c "python3 /home/radwan/info_parser.py & python3 /home/radwan/flask_plot.py"
+    command: /bin/bash -c "python3 /home/radwan/info_parser.py & streamlit run streamlit_app.py"
 
   database:
     image: 'bitnami/mongodb'
