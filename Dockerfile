@@ -9,7 +9,8 @@ RUN pip3 install requests \
                  pymongo \
                  flask \
                  plotly \
-                 packaging
+                 packaging \
+                 selenium
 RUN pip3 install -U pip setuptools
 RUN apt-get install -y locales \
     && echo "en_US UTF-8" > /etc/locale.gen \
