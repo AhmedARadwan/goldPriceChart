@@ -20,7 +20,7 @@ RUN apt-get install -y locales \
     && export LC_ALL=en_US.UTF-8 \
     && pip3 install streamlit pandas
 
-RUN wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+RUN apt install -y wget && wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
     && apt-get install -y ./google-chrome.deb \
     && rm google-chrome.deb
 
