@@ -20,9 +20,13 @@ RUN apt-get install -y locales \
     && export LC_ALL=en_US.UTF-8 \
     && pip3 install streamlit pandas
 
-RUN apt install -y wget && wget -q -O google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+RUN apt install -y wget && wget -q -O google-chrome.deb https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_123.0.6312.86-1_amd64.deb \
     && apt-get install -y ./google-chrome.deb \
     && rm google-chrome.deb
+
+RUN apt install -y unzip && wget -q -O /tmp/chromedriver.zip https://storage.googleapis.com/chrome-for-testing-public/123.0.6312.86/linux64/chromedriver-linux64.zip && \
+    unzip /tmp/chromedriver.zip -d /usr/local/bin/ && \
+    rm /tmp/chromedriver.zip && cp /usr/local/bin/chromedriver-linux64/chromedriver /usr/bin/
 
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8

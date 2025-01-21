@@ -35,7 +35,7 @@ while True:
         options.add_argument("--disable-gpu")  # Disable GPU (optional, may improve compatibility)
         options.add_argument("--no-sandbox")  # Bypass OS security model (optional, for Linux)
         options.add_argument("--disable-dev-shm-usage")
-        driver = webdriver.Chrome(options=options)  # Or webdriver.Firefox() based on your browser setup
+        driver = webdriver.Chrome(options=options)
         driver.get("https://dubaicityofgold.com")
         time.sleep(5)
         html_content = driver.page_source
